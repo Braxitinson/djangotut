@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <h1>{{ instance.title }} </h1></br>
+        {% if instance.user.get_full_name %}
+        <p>Author: {{ instance.user.get_full_name }}</p>
+        {% endif %}
+
+        {% if instance.images %}
+            <img src="{{ instance.images.url }}" class="img-responsive"/></br>
+        {% endif %}
+        {{ instance.category }} </br>
+        {{ instance.content }} </br>
+        {{ instance.timestamp }} </br>
+    </div>
+</div>
+{% endblock %}}
