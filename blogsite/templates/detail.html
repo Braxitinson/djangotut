@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-4 col-md-offset-4 ">
+    <div class="col-sm-6 col-md-offset-3 ">
+
         <h1>{{ instance.title }} </h1></br>
         {% if instance.user.get_full_name %}
         <p>Author: {{ instance.user.get_full_name }}</p>
@@ -14,6 +16,43 @@
         {{ instance.category }} </br>
         <div class="markdown-content">{{ instance.content}} </br></div>
         {{ instance.timestamp }} </br>
+        <hr/>
+
+        <div>
+        <p class="lead"> Comments </p>
+        <form method="post" action=".">{% csrf_token %}
+            {{ comment_forms|crispy }}
+            <input type="submit" class="btn btn-default" />
+        </form>
+        {% for comt in comments %}
+            <blockquote>
+                <p>{{ comt.content }}</p>
+                <footer>via {{ comt.user }} | {{ comt.timestamp|timesince }} ago | {% if comt.children.count > 0 %} {{ comt.children.count }}{% endif %} Comment{% if comt.children.count > 1 %}s{% endif %} | <a class="comment-reply-btn" href="#">Reply</a> </footer>
+                <div class="comment-reply" style="display:none;">
+                    {% for comt_child in comt.children %}
+                        <blockquote>
+                             <p>{{ comt_child.content }}</p>
+                             <footer>via {{ comt_child.user }} | {{ comt_child.timestamp|timesince }} ago </footer>
+                        </blockquote>
+                    {% endfor %}
+
+                    <form method="post" action=".">{% csrf_token %}
+                        {{ comment_forms|crispy }}
+                        <input type="hidden" name="parent_id" value="{{ comt.id }}" />
+                        <input type="submit" class="btn btn-default" />
+                    </form>
+                </div>
+
+            </blockquote>
+
+            <hr/>
+
+        {% endfor %}
+
     </div>
+
+    </div>
+
+
 </div>
 {% endblock %}}

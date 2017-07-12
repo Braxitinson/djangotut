@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.utils import timezone
+from django.contrib.contenttypes.models import ContentType
+from comment.models import Comment
 
 class PostManager(models.Manager):
     def active(self, *args, **kwargs):
@@ -37,6 +39,20 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True,auto_now_add=False)
 
     objects = PostManager()
+
+    @property
+    def comments(self):
+        instance = self
+        qs = Comment.objects.filter_by_instance(instance)
+        return qs
+
+    @property
+    def get_content_type(self):
+        instance = self
+        content_type = ContentType.objects.get_for_model(instance.__class__)
+        return content_type
+
+
 
     def __unicode__(self):
         return self.title

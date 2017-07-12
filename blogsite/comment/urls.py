@@ -13,18 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf import settings
 from django.conf.urls import url, include
-from django.conf.urls.static import static
 from django.contrib import admin
-import post
+import comment.views as comment_views
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^blog/', include('post.urls',namespace='blog')),
-    url(r'^comment/', include('comment.urls',namespace='comment')),
+    url(r'^(?P<id>\d+)/$', comment_views.comment_detail, name="comment_detail"),
+    # url(r'^(?P<id>\d+)/update/', comment_views.comment_update, name="comment_update"),
+    # url(r'^(?P<id>\d+)/delete/', comment_views.comment_delete, name="comment_delete"),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
