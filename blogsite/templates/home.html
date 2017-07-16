@@ -25,9 +25,9 @@
             {% if obj.images %}
                 <img src="{{ obj.images.url }}" class="img-responsive"/></br>
             {% endif %}
-            {{ obj.category }}</br>
-            <div class="markdown-content">{{ obj.content|truncatechars_html:2 }}</br></div>
-            {{ obj.timestamp }}</br>
+{#            {{ obj.category }}</br>#}
+            <div class="markdown-content"><p>{{ obj.get_markdown|truncatechars_html:40 }}</p></div>
+{#            {{ obj.timestamp }}</br>#}
             <hr>
         </div>
 

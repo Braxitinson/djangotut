@@ -12,6 +12,7 @@ from comment.forms import CommentForm
 
 from comment.models import Comment
 from django.db.models import Q
+from .utils import get_read_time
 
 # Create your views here.
 

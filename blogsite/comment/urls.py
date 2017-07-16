@@ -18,7 +18,7 @@ from django.contrib import admin
 import comment.views as comment_views
 
 urlpatterns = [
-    url(r'^(?P<id>\d+)/$', comment_views.comment_detail, name="comment_detail"),
+    url(r'^(?P<id>\d+)/$', comment_views.comment_thread, name="comment_thread"),
     # url(r'^(?P<id>\d+)/update/', comment_views.comment_update, name="comment_update"),
-    # url(r'^(?P<id>\d+)/delete/', comment_views.comment_delete, name="comment_delete"),
+    url(r'^(?P<id>\d+)/delete/', comment_views.comment_delete, name="comment_delete"),
 ]

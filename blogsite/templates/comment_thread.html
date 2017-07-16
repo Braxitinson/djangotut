@@ -5,6 +5,7 @@
     <div class="col-sm-6 col-md-offset-3 ">
         <h1>Comment</h1>
         <p>{{ instance.content }}</p>
+        <footer>via {{ instance.user }} | {{ instance.timestamp|timesince }} ago {% if instance.children.count > 0 %}Comment{%  if instance.children.count > 1 %}s{% endif %} {% endif %} | {% if instance.user == request.user %}Delete{% endif %}</footer>
 
         </hr>
 

@@ -6,9 +6,10 @@ from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
-
+from markdown_deux import markdown
 class PostManager(models.Manager):
     def active(self, *args, **kwargs):
         return super(PostManager, self).filter(draft=False).filter(publish__lte=timezone.now())
@@ -39,6 +40,14 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True,auto_now_add=False)
 
     objects = PostManager()
+
+    class Meta:
+        ordering = ["timestamp", "-updated"]
+
+    def get_markdown(self):
+       content = self.content
+       markdown_text = markdown(content)
+       return mark_safe(markdown_text)
 
     @property
     def comments(self):

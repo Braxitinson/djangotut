@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.contrib import messages
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -10,15 +11,22 @@ from comment.models import Comment
 from comment.forms import CommentForm
 
 # Create your views here.
-def comment_detail(request, id=None):
-    instance = get_object_or_404(Comment, id=id)
+def comment_thread(request, id=None):
+    # instance = get_object_or_404(Comment, id=id)
+    try:
+        instance = Comment.objects.get(id=id)
+    except:
+        raise Http404
+
 
     initial_data = {
-        "content_type": instance.get_content_type,
+        "content_type": instance.content_object.get_content_type,
         "object_id": instance.object_id,
     }
 
     comment_forms = CommentForm(request.POST or None, initial=initial_data)
+    print(comment_forms.errors)
+
     if comment_forms.is_valid():
         c_type = comment_forms.cleaned_data.get("content_type")
         content_type = ContentType.objects.get(model=c_type)
@@ -41,12 +49,37 @@ def comment_detail(request, id=None):
             content=content_data,
             parent=parent_obj,
         )
-        return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
+        return HttpResponseRedirect(instance.get_absolute_url())
 
     context = {
         "instance": instance,
-        "comment_form": comment_forms,
+        "comment_forms": comment_forms,
     }
 
 
-    return render(request, 'comment_detail.html', context)
+    return render(request, 'comment_thread.html', context)
+
+
+def comment_delete(request, id):
+    # obj = get_object_or_404(Comment, id=id)
+    try:
+        obj = Comment.objects.get(id=id)
+    except:
+        raise Http404
+
+    if obj.user != request.user:
+        # messages.success(request, "You have no Permission")
+        response = HttpResponse("You don't have permission to do this")
+        response.status_code = 403
+        raise response
+
+    if request.method == "POST":
+        parent_obj_url = obj.content_object.get_absolute_url()
+        obj.delete()
+        messages.success(request, "Deleted")
+        return HttpResponseRedirect(parent_obj_url)
+    context = {
+        "object": obj,
+    }
+
+    return render(request, "confirm_delete.html", context)
