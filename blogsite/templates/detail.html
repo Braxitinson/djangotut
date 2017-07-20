@@ -27,7 +27,7 @@
         {% for comt in comments %}
             <blockquote>
                 <p>{{ comt.content }}</p>
-                <footer>via {{ comt.user }} | {{ comt.timestamp|timesince }} ago | {% if comt.children.count > 0 %} {{ comt.children.count }}{% endif %} Comment{% if comt.children.count > 1 %}s{% endif %} | <a class="comment-reply-btn" href="#">Reply</a> |<a href="{{ comt.get_absolute_url }}"> Thread </a>{% if comt.user == request.user %}</footer>
+                <footer>via {{ comt.user }} | {{ comt.timestamp|timesince }} ago | {% if comt.children.count > 0 %} {{ comt.children.count }}{% endif %} Comment{% if comt.children.count > 1 %}s{% endif %} | <a class="comment-reply-btn" href="#">Reply</a> |<a href="{{ comt.get_absolute_url }}"> Thread </a>| {% if comt.user == request.user %}<a href="{{ comt.get_delete_url }}"> Delete </a>{% endif %}</footer>
                 <div class="comment-reply" style="display:none;">
                     {% for comt_child in comt.children %}
                         <blockquote>
