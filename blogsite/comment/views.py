@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.contenttypes.models import ContentType
@@ -59,7 +60,7 @@ def comment_thread(request, id=None):
 
     return render(request, 'comment_thread.html', context)
 
-
+@login_required(login_url='/login/')
 def comment_delete(request, id):
     # obj = get_object_or_404(Comment, id=id)
     try:

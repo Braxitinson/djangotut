@@ -19,7 +19,7 @@ class UserLoginForm(forms.Form):
                 raise forms.ValidationError("This user does not exist")
             if not user.check_password(password):
                 raise forms.ValidationError("Incorrect Password")
-            if not user.is_active():
+            if not user.is_active:
                 raise forms.ValidationError("This user is no longer activate")
         return super(UserLoginForm, self).clean(*args, **kwargs)
 

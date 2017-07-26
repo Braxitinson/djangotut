@@ -10,19 +10,23 @@ from .forms import UserLoginForm, UserRegisterForm
 
 # Create your views here.
 def login_view(request):
+    next = request.GET.get('next')
     title = "Login"
     form = UserLoginForm(request.POST or None)
-    print (request.user.is_authenticated())
+
     if form.is_valid():
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
         login(request, user)
-        print (request.user.is_authenticated())
+        if next:
+            return redirect(next)
+        return redirect("/blog")
 
     return render(request, "login.html", {"form": form,"title": title})
 
 def register_view(request):
+    next = request.GET.get('next')
     title = 'Register'
     form = UserRegisterForm(request.POST or None)
     if form.is_valid():
@@ -32,10 +36,13 @@ def register_view(request):
         user.save()
         new_user = authenticate(username=user.username, password=password)
         login(request, new_user)
+        if next:
+            return redirect(next)
         return redirect("/blog")
 
 
     return render(request, 'login.html', {"form":form,"title":title})
 
 def logout_view(request):
-    return render(request, 'login.html',{})
+    logout(request)
+    return redirect("/blog")
